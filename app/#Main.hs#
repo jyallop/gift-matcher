@@ -7,7 +7,6 @@ import System.Random.Shuffle
 import Text.ParserCombinators.ReadP
 import System.IO
 import Data.Char
-import Data.List
 
 main :: IO ()
 main = do 
@@ -20,13 +19,26 @@ main = do
     putStrLn input
     g <- newStdGen
     let len = length people
-    let randomizedInput = shuffle' people len g
-    putStrLn $ show randomizedInput
-    let possiblePairs = potentialLists randomizedInput
-    let pairs = head $ filter (\x -> all canGive x) possiblePairs 
+    putStrLn $ show pairs
     let output = map (\((Person x _), (Person y _)) -> x ++ " -> " ++ y) pairs
+    putStrLn $ show output
     mapM_ (\x -> hPutStrLn outh x) output
     hClose outh
 
-potentialLists :: Eq a => [a] -> [[(a, a)]]
+generatePairs :: Eq a => [a] -> [[(a, a)]]
+generatePairs [] = []
+generatePairs x = 
+    let newList = tail x ++ [head x]
+    in
+    generatePairs' x newList
+
+generatePairs' :: Eq a => [a] -> [a] -> [[(a, a)]]
+generatePairs' x y =
+    if (x == y)
+      then [(zip x y)]
+      else let newList = (tail y) ++ [head y]
+              in 
+              (zip x y) : (generatePairs' x newList)
+
+potentialLists :: [Person] -> [[Person]]
 potentialLists people = map (zip people) (permutations people)
