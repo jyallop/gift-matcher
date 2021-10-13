@@ -1,0 +1,11 @@
+module Graph.Graph where
+
+import Data.Set
+
+data Node a = Node a Bool
+
+data Edge a where
+  Edge :: (Eq a) => Edge (Node a) (Node a)
+  
+data Graph a = Graph [Node a] [Edge a]
+
